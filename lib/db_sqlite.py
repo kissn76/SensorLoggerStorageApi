@@ -100,16 +100,23 @@ def sensordata_validate(sensorid:str, dateAndTime:str, value:float) -> list:
     if bool(sensorid) is False:
         sensorid_errors.append("Value is empty")
 
-    if bool(dateAndTime) is False:
+    if bool(dateAndTime):
+        try:
+            dateAndTime = datetime.fromisoformat(dateAndTime).strftime("%Y-%m-%d %H:%M:%S")
+        except:
+            datetime_errors.append(f'Date and time error (valid format: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
+    else:
         datetime_errors.append("Value is empty")
-    try:
-        dateAndTime = datetime.fromisoformat(dateAndTime).strftime("%Y-%m-%d %H:%M:%S")
-    except:
-        datetime_errors.append(f'Date and time error (format: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
-    value = float(str(value).replace(',', '.'))
-    if str(value).replace('.', '', 1).isdigit() is False:
-        value_errors.append("Value is not a number")
+    if bool(value):
+        try:
+            value = float(str(value).replace(',', '.'))
+            if str(value).replace('.', '', 1).isdigit() is False:
+                value_errors.append("Value is not a number")
+        except ValueError:
+            value_errors.append("Value is not a number")
+    else:
+        value_errors.append("Value is empty")
 
     if bool(sensorid_errors):
         error_messages.update({"sensorid": sensorid_errors})
