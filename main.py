@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+from lib import db_sqlite as db
+
 
 app = Flask(__name__)
 
@@ -12,4 +14,5 @@ def query_records():
     return jsonify({"sensorid": sensorid, "datetime": dateAndTime, "value": value})
 
 if __name__ == '__main__':
+    db.create_tables()
     app.run(debug=True)
