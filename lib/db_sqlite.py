@@ -108,8 +108,6 @@ def sensordata_validate(sensorid:str, dateAndTime:str, value:float) -> list:
         datetime_errors.append(f'Date and time error (format: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
     value = float(str(value).replace(',', '.'))
-    if bool(value) is False:
-        value_errors.append("Value is empty")
     if str(value).replace('.', '', 1).isdigit() is False:
         value_errors.append("Value is not a number")
 

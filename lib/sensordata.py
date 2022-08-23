@@ -22,7 +22,7 @@ class Sensordata:
         self.error = valid
 
 
-    def save(self):
+    def save(self) -> int:
         ret = None
         self.validate()
         if self.id is None and len(self.error) == 0:
@@ -47,24 +47,32 @@ class Sensordata:
         self.value = value
 
 
-    def getId(self):
+    def getId(self) -> int:
         return self.id
 
 
-    def getSensorid(self):
+    def getSensorid(self) -> str:
         return self.sensorid
 
 
-    def getDatetime(self):
+    def getDatetime(self) -> str:
         return self.datetime
 
 
-    def getValue(self):
-        return self.value
+    def getValue(self) -> float:
+        return float(self.value)
+
+
+    def getError(self) -> list:
+        return self.error
 
 
     def getAsString(self):
         return f"{self.id} {self.sensorid} {self.datetime} {self.value}"
+
+
+    def getAsDictionary(self) -> dict:
+        return {"id": self.id, "sensorid": self.sensorid, "datetime": self.datetime, "value": self.value}
 
 
     def print(self):
@@ -74,6 +82,16 @@ class Sensordata:
 def getAll() -> list:
     objects = {}
     elements = db.sensordata_select_all()
+    for element in elements:
+        id = element[0]
+        obj = Sensordata(id)
+        objects.update({obj.getId(): obj})
+    return objects
+
+
+def getBySensorId(sensorId:str) -> list:
+    objects = {}
+    elements = db.sensordata_select_by_sensorid(sensorId)
     for element in elements:
         id = element[0]
         obj = Sensordata(id)
