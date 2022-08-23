@@ -14,5 +14,5 @@ def query_records():
     return jsonify({"sensorid": sensorid, "datetime": dateAndTime, "value": value})
 
 if __name__ == '__main__':
-    db.create_tables()
+    # db.create_tables()
     app.run(debug=True)
