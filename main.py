@@ -1,21 +1,23 @@
 # pip install Flask
 # pip install Flask-HTTPAuth
 # pip install pyopenssl
+import configparser
 from flask import Flask, request, jsonify
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from lib import db_sqlite as db
 from lib import sensordata
 
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
-users = {
-    "hello": generate_password_hash("world"),
-    "susan": generate_password_hash("h4ck3r")
-}
+config = configparser.ConfigParser()
+config.read("passwd")
+users = {}
+for confSectionName in config.sections():
+    for key, val in config.items(confSectionName):
+        users.update({key: generate_password_hash(val)})
 
 
 @auth.verify_password
@@ -27,7 +29,6 @@ def verify_password(username, password):
 @app.route('/', methods=['GET'])
 @auth.login_required
 def query_records_get():
-    # dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sensorid:str = None
     dateAndTime:str = None
     value:float = None
@@ -52,7 +53,6 @@ def query_records_get():
 @app.route('/', methods=['POST'])
 @auth.login_required
 def query_records_post():
-    # dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     content = request.json
     sensorid:str = None
     dateAndTime:str = None
@@ -81,6 +81,7 @@ def saveData(sensorid:str, dateAndTime:str, value:float) -> list:
     if bool(sd.getError()):
         ret = sd.getError()
     else:
+        dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         datas = sensordata.getBySensorId(sensorid)
         for d in datas:
             d = sensordata.Sensordata(d)
@@ -90,5 +91,4 @@ def saveData(sensorid:str, dateAndTime:str, value:float) -> list:
 
 
 if __name__ == "__main__":
-    db.create_tables()
     app.run(ssl_context="adhoc", debug=True)

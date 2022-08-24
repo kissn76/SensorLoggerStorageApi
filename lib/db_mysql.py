@@ -1,15 +1,17 @@
-import sqlite3
-from sqlite3 import Error
+# pip install mysql-connector-python
+import mysql.connector as mysql
 
 
-def create_connection(db_file:str="database.db") -> sqlite3.Connection:
+def create_connection() -> mysql.MySQLConnection:
     conn = None
-    base_path = "./data/"
-    path = base_path + db_file
+    host = "localhost",
+    user = "root",
+    passwd = "dbms"
+    database = "datacamp"
 
     try:
-        conn = sqlite3.connect(path)
-    except Error as e:
+        conn = mysql.connect(host=host, user=user, passwd=passwd, database=database)
+    except mysql.connector.Error as e:
         print(e)
 
     return conn
@@ -21,7 +23,7 @@ def create_table(create_table_sql:str):
         try:
             cur = conn.cursor()
             cur.execute(create_table_sql)
-        except Error as e:
+        except mysql.connector.Error as e:
             print(e)
     else:
         print("Error! Cannot create the database connection.")
@@ -52,7 +54,7 @@ def data_insert(table:str, **values) -> int:
             cur.execute(sql, tuple(values.values()))
             conn.commit()
             ret = cur.lastrowid
-        except Error as e:
+        except mysql.connector.Error as e:
             print(e)
     else:
         print("Error! Cannot create the database connection.")
@@ -76,7 +78,7 @@ def data_select(table:str, fields:tuple=("*",), whereClause:str=None) -> list:
             cur = conn.cursor()
             cur.execute(sql)
             ret = cur.fetchall()
-        except Error as e:
+        except mysql.connector.Error as e:
             print(e)
     else:
         print("Error! Cannot create the database connection.")

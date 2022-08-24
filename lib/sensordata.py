@@ -1,5 +1,4 @@
-from lib import db_sqlite as db
-import datetime
+from lib import db
 
 
 class Sensordata:
