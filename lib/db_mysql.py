@@ -1,16 +1,18 @@
 # pip install mysql-connector-python
 import mysql.connector as mysql
+from lib import settings
+
+
+mysqlHost = settings.mysqlHost
+mysqlUser = settings.mysqlUser
+mysqlPasswd = settings.mysqlPasswd
+mysqlDatabase = settings.mysqlDatabase
 
 
 def create_connection() -> mysql.MySQLConnection:
     conn = None
-    host = "localhost",
-    user = "root",
-    passwd = "dbms"
-    database = "datacamp"
-
     try:
-        conn = mysql.connect(host=host, user=user, passwd=passwd, database=database)
+        conn = mysql.connect(host=mysqlHost, user=mysqlUser, passwd=mysqlPasswd, database=mysqlDatabase)
     except mysql.connector.Error as e:
         print(e)
 

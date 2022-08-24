@@ -1,23 +1,21 @@
 # pip install Flask
 # pip install Flask-HTTPAuth
 # pip install pyopenssl
-import configparser
 from flask import Flask, request, jsonify
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from lib import sensordata
+from lib import sensordata, settings
 
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
-config = configparser.ConfigParser()
-config.read("passwd")
+settings.readSettings()
+
 users = {}
-for confSectionName in config.sections():
-    for key, val in config.items(confSectionName):
-        users.update({key: generate_password_hash(val)})
+for key, val in settings.users.items():
+    users.update({key: generate_password_hash(val)})
 
 
 @auth.verify_password
@@ -82,7 +80,7 @@ def saveData(sensorid:str, dateAndTime:str, value:float) -> list:
         ret = sd.getError()
     else:
         dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        datas = sensordata.getBySensorId(sensorid)
+        datas = sensordata.getAllBySensorId(sensorid)
         for d in datas:
             d = sensordata.Sensordata(d)
             ret.append(d.getAsDictionary())

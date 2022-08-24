@@ -1,14 +1,19 @@
 import sqlite3
 from sqlite3 import Error
+from lib import settings
 
 
-def create_connection(db_file:str="database.db") -> sqlite3.Connection:
+sqlitePath = None
+if bool(settings.sqlitePath):
+    sqlitePath = settings.sqlitePath
+else:
+    sqlitePath = "./data/database.db"
+
+
+def create_connection() -> sqlite3.Connection:
     conn = None
-    base_path = "./data/"
-    path = base_path + db_file
-
     try:
-        conn = sqlite3.connect(path)
+        conn = sqlite3.connect(sqlitePath)
     except Error as e:
         print(e)
 
